@@ -21,15 +21,15 @@
 # (`burhanrb/menfez`) until notarisation lands. After that it can move to
 # homebrew/cask with no change to the stanza below.
 cask "menfez" do
-  version "1.0.0"
+  version "1.0.1"
 
   on_arm do
-    sha256 "f1023084771641059d94e98fc056d8bd8434a2806797cf2026c67a5166f4d3ff"
+    sha256 "9d0bd11ce24f7b84790c76ef9f0c121a58e27527e5d94eba2467219f5e6854aa"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-arm64.dmg"
   end
   on_intel do
-    sha256 "3eb549b75a64a4d1c9acdb02733488d85cdef1f341f5571c9ff3c797e353be5c"
+    sha256 "b503228c7732856716701ffdf415a88bb53228439ff19be0ae2b358e7972aa3e"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-intel.dmg"
   end
@@ -42,6 +42,8 @@ cask "menfez" do
     url :url
     strategy :github_latest
   end
+
+  depends_on macos: :ventura
 
   app "Menfez.app"
 
@@ -87,12 +89,11 @@ cask "menfez" do
     DPI mode works right away and needs no administrator password.
 
     The WireGuard tunnel mode is optional and needs your own WireGuard .conf
-    file. It also needs a one-time setup that asks for your password, which
-    this cask does not run for you:
+    file. It also needs a one-time setup, which this cask does not run for you:
       brew install wireguard-tools wireguard-go bash
-      sudo /bin/bash /Applications/Menfez.app/Contents/Resources/install-helper.sh \\
-        /Applications/Menfez.app/Contents/MacOS/menfez-route "$USER"
-    This copies the tunnel helper to /Library/PrivilegedHelperTools/menfez and
-    allows only that helper to run with sudo. Run it again after each upgrade.
+    then press "Tüneli kur" / "Set up tunnel" in Menfez; macOS asks for your
+    administrator password. This copies the tunnel helper to
+    /Library/PrivilegedHelperTools/menfez and allows only that helper to run
+    with sudo. Press it again after each upgrade.
   EOS
 end
