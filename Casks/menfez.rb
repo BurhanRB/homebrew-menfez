@@ -21,17 +21,15 @@
 # (`burhanrb/menfez`) until the first stable release (1.1.0); it can then move
 # to homebrew/cask with no change to the stanza below.
 cask "menfez" do
-  # Per-architecture version: the Intel image of a release can trail the arm64
-  # one while Apple notarises it; Intel keeps the previous release until then.
+  version "1.0.5"
+
   on_arm do
-    version "1.0.5"
     sha256 "b2428764cc7bfedf96ecf316a94349c109bc13a222b50ac35520aedf8863d2f5"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-arm64.dmg"
   end
   on_intel do
-    version "1.0.4"
-    sha256 "a10967d094c93d48318bb8fce47eaf9debabccc16982bb67052aecd17da66802"
+    sha256 "59356b44441aea61a7cc482fdab8fbedcc5f0391bc51dc0c10aecef04872d4c2"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-intel.dmg"
   end
