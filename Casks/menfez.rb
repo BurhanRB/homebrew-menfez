@@ -21,15 +21,15 @@
 # (`burhanrb/menfez`) until the first stable release (1.1.0); it can then move
 # to homebrew/cask with no change to the stanza below.
 cask "menfez" do
-  version "1.0.7"
+  version "1.0.8"
 
   on_arm do
-    sha256 "eeabfc30b5ee26acdf607f13046b79609bdc92f04091fd82eb01990e415d9326"
+    sha256 "93de6073e7a9beb008fe9d6a589fafed708bc5c7ffa9be0ba8876bcdf5fbb838"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-arm64.dmg"
   end
   on_intel do
-    sha256 "0d0253627a8bfba25bb16bd2f0c7082e9dc7b70661ccb4fea46ed0d8d6269718"
+    sha256 "383ff17c51f44c40e8d38168bee7f533398c0393bef575f9831f209859f134b4"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-intel.dmg"
   end
@@ -68,6 +68,11 @@ cask "menfez" do
   # Keychain (generic passwords of service com.menfez.app.wireguard, nothing
   # else). That step runs as the user, not under sudo, so it reaches the user's
   # keychain; it stops when none is left (capped at 200).
+  #
+  # 1.0.8+ (helper 6): before the tunnel goes down, `proxy off` gives the
+  # browsers their previous proxy setting back from proxy-state.json, which is
+  # deleted with the rest of the state right after. An older helper refuses the
+  # command and the script carries on.
   uninstall quit: "com.menfez.app"
 
   zap early_script: {
@@ -86,6 +91,7 @@ cask "menfez" do
           "-c",
           "H=/Library/PrivilegedHelperTools/menfez/menfez-route; " \
           "if [ -x \"$H\" ] && [ \"$(stat -f %u \"$H\")\" = 0 ]; then " \
+          "\"$H\" proxy off; " \
           "\"$H\" down; " \
           "D='/Library/Application Support/Menfez/dns-state.json'; " \
           "{ [ -f \"$D\" ] || [ -f /var/run/menfez/dns-state.json ]; } && \"$H\" dns auto; " \
