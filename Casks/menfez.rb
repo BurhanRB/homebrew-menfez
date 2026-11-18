@@ -21,15 +21,15 @@
 # (`burhanrb/menfez`) until the first stable release (1.1.0); it can then move
 # to homebrew/cask with no change to the stanza below.
 cask "menfez" do
-  version "1.0.6"
+  version "1.0.7"
 
   on_arm do
-    sha256 "c56f4b67170b004dc86fbcd55803744b637eb0873d2dd6ed397cd637496e1cba"
+    sha256 "eeabfc30b5ee26acdf607f13046b79609bdc92f04091fd82eb01990e415d9326"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-arm64.dmg"
   end
   on_intel do
-    sha256 "240dfbac70a0e7ab396dea417e94bfa67284a143d0c4a31c7da51a2bf2b95ac1"
+    sha256 "0d0253627a8bfba25bb16bd2f0c7082e9dc7b70661ccb4fea46ed0d8d6269718"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-intel.dmg"
   end
@@ -63,9 +63,24 @@ cask "menfez" do
   # exists, so a resolver the user set by hand is kept), then the state, the rule
   # and the helper are removed. Every step is best effort and a no-op when the
   # tunnel was never set up.
+  #
+  # 1.0.7+: zap also deletes the profiles' private keys from the user's login
+  # Keychain (generic passwords of service com.menfez.app.wireguard, nothing
+  # else). That step runs as the user, not under sudo, so it reaches the user's
+  # keychain; it stops when none is left (capped at 200).
   uninstall quit: "com.menfez.app"
 
-  zap script: {
+  zap early_script: {
+        executable:   "/bin/sh",
+        args:         [
+          "-c",
+          "n=0; while [ $n -lt 200 ] && " \
+          "/usr/bin/security delete-generic-password -s com.menfez.app.wireguard >/dev/null 2>&1; " \
+          "do n=$((n + 1)); done; exit 0",
+        ],
+        must_succeed: false,
+      },
+      script:       {
         executable:   "/bin/sh",
         args:         [
           "-c",
@@ -79,11 +94,11 @@ cask "menfez" do
         sudo:         true,
         must_succeed: false,
       },
-      delete: [
+      delete:       [
         "/etc/sudoers.d/menfez",
         "/Library/PrivilegedHelperTools/menfez",
       ],
-      trash:  "~/Library/Application Support/Menfez"
+      trash:        "~/Library/Application Support/Menfez"
 
   caveats <<~EOS
     DPI mode works right away and needs no administrator password.
