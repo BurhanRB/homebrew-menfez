@@ -10,5 +10,5 @@ brew trust burhanrb/menfez   # Homebrew 7+
 brew install --cask menfez
 ```
 
-Bu sürüm henüz Apple tarafından imzalanmadı. İlk açılışta Menfez'e sağ tıkla > Aç.
-This build is not signed by Apple yet. On first launch, right-click Menfez > Open.
+Menfez Developer ID ile imzalı ve Apple tarafından notarize. Her uygulama gibi açılır.
+Menfez is signed with a Developer ID and notarised by Apple, so it opens like any other app.
