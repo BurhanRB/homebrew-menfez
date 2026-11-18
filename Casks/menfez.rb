@@ -15,20 +15,22 @@
 # blocks. That keeps one cask name (`menfez`) so `brew install --cask menfez`
 # works everywhere, which is what users will type.
 #
-# INSTALLING BEFORE THE DEVELOPER ID ARRIVES
-# The app is ad-hoc signed. Official homebrew/cask requires Gatekeeper to pass on
-# a default configuration, so this cask belongs in a third-party tap
-# (`burhanrb/menfez`) until notarisation lands. After that it can move to
-# homebrew/cask with no change to the stanza below.
+# SIGNED FROM 1.0.5
+# From 1.0.5 the app is Developer ID signed and notarised, so Gatekeeper passes
+# on a default configuration. The cask stays in a third-party tap
+# (`burhanrb/menfez`) until the first stable release (1.1.0); it can then move
+# to homebrew/cask with no change to the stanza below.
 cask "menfez" do
-  version "1.0.4"
-
+  # Per-architecture version: the Intel image of a release can trail the arm64
+  # one while Apple notarises it; Intel keeps the previous release until then.
   on_arm do
-    sha256 "acd1b7e2586835d7f9ecde2cd719cc28ed0b5f76692395bc95d1bbd18da918bf"
+    version "1.0.5"
+    sha256 "b2428764cc7bfedf96ecf316a94349c109bc13a222b50ac35520aedf8863d2f5"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-arm64.dmg"
   end
   on_intel do
+    version "1.0.4"
     sha256 "a10967d094c93d48318bb8fce47eaf9debabccc16982bb67052aecd17da66802"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-intel.dmg"
@@ -49,43 +51,41 @@ cask "menfez" do
 
   # The optional tunnel setup (install-helper.sh) copies the helper into
   # /Library/PrivilegedHelperTools/menfez and grants it in /etc/sudoers.d/menfez.
-  # A cask cannot create that grant (it needs root and is opt-in by design), but
-  # it must not leave it behind. Order matters, as in uninstall.sh: the helper
-  # first takes the tunnel down and restores DNS from /Library/Application Support/Menfez/dns-state.json
-  # (or /var/run/menfez/dns-state.json from older releases)
-  # (only when that record exists, so a resolver the user set by hand is kept),
-  # then the state, the rule and the helper are removed. Every step is best
-  # effort and a no-op when the tunnel was never set up.
+  # A cask cannot create that grant (it needs root and is opt-in by design).
   #
-  # This is `uninstall`, not only `zap`, so it also runs on `brew upgrade`: the
-  # root-owned copy is of the old version anyway, and the caveat asks the user
-  # to re-run the setup after an upgrade.
-  uninstall script: {
-              executable:   "/bin/sh",
-              args:         [
-                "-c",
-                "H=/Library/PrivilegedHelperTools/menfez/menfez-route; " \
-                "if [ -x \"$H\" ] && [ \"$(stat -f %u \"$H\")\" = 0 ]; then " \
-                "\"$H\" down; " \
-                "D='/Library/Application Support/Menfez/dns-state.json'; " \
-                "{ [ -f \"$D\" ] || [ -f /var/run/menfez/dns-state.json ]; } && \"$H\" dns auto; " \
-                "fi; rm -rf /var/run/menfez '/Library/Application Support/Menfez'; exit 0",
-              ],
-              sudo:         true,
-              must_succeed: false,
-            },
-            delete: [
-              "/etc/sudoers.d/menfez",
-              "/Library/PrivilegedHelperTools/menfez",
-            ]
+  # Plain `uninstall` (which also runs on `brew upgrade`) only quits the app, so
+  # an upgrade keeps the helper and the app offers "Güncelle" when it is outdated.
+  # Removing the helper is `zap` (`brew uninstall --zap --cask menfez`), or the
+  # app's "Tüneli kaldır". Order matters, as in uninstall.sh: the helper first
+  # takes the tunnel down and restores DNS from
+  # /Library/Application Support/Menfez/dns-state.json (or
+  # /var/run/menfez/dns-state.json from older releases; only when that record
+  # exists, so a resolver the user set by hand is kept), then the state, the rule
+  # and the helper are removed. Every step is best effort and a no-op when the
+  # tunnel was never set up.
+  uninstall quit: "com.menfez.app"
 
-  zap trash: "~/Library/Application Support/Menfez"
+  zap script: {
+        executable:   "/bin/sh",
+        args:         [
+          "-c",
+          "H=/Library/PrivilegedHelperTools/menfez/menfez-route; " \
+          "if [ -x \"$H\" ] && [ \"$(stat -f %u \"$H\")\" = 0 ]; then " \
+          "\"$H\" down; " \
+          "D='/Library/Application Support/Menfez/dns-state.json'; " \
+          "{ [ -f \"$D\" ] || [ -f /var/run/menfez/dns-state.json ]; } && \"$H\" dns auto; " \
+          "fi; rm -rf /var/run/menfez '/Library/Application Support/Menfez'; exit 0",
+        ],
+        sudo:         true,
+        must_succeed: false,
+      },
+      delete: [
+        "/etc/sudoers.d/menfez",
+        "/Library/PrivilegedHelperTools/menfez",
+      ],
+      trash:  "~/Library/Application Support/Menfez"
 
   caveats <<~EOS
-    Menfez is not signed by Apple yet, so macOS blocks the first launch.
-    Open Menfez once, click Done, then go to System Settings > Privacy &
-    Security, scroll down and click "Open Anyway". You only do this once.
-
     DPI mode works right away and needs no administrator password.
 
     The WireGuard tunnel mode is optional and needs your own WireGuard .conf
@@ -94,6 +94,9 @@ cask "menfez" do
     then press "Tüneli kur" / "Set up tunnel" in Menfez; macOS asks for your
     administrator password. This copies the tunnel helper to
     /Library/PrivilegedHelperTools/menfez and allows only that helper to run
-    with sudo. Press it again after each upgrade.
+    with sudo.
+
+    To remove the tunnel helper too, use `brew uninstall --zap --cask menfez`
+    or "Tüneli kaldır" / "Remove tunnel" in Menfez.
   EOS
 end
