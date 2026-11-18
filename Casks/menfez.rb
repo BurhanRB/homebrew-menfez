@@ -21,15 +21,15 @@
 # (`burhanrb/menfez`) until notarisation lands. After that it can move to
 # homebrew/cask with no change to the stanza below.
 cask "menfez" do
-  version "1.0.2"
+  version "1.0.3"
 
   on_arm do
-    sha256 "2bbcfa4312705fcbdeb511f11b313e955f2bea0ea2b057ba6b3bc7e85996f800"
+    sha256 "8006df08479477fe2ede3c353c059d29715814739e16800d25fdafa3905087c2"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-arm64.dmg"
   end
   on_intel do
-    sha256 "9877e67d741d1d8aa5798e2583cff27146374edcab55055192f99e656fe050b1"
+    sha256 "753465d130b1d4e2bcfae86c59bd854debbe2c1257542679dcb8691158fcd0e3"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-intel.dmg"
   end
