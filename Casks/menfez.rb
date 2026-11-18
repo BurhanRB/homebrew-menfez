@@ -21,15 +21,15 @@
 # (`burhanrb/menfez`) until the first stable release (1.1.0); it can then move
 # to homebrew/cask with no change to the stanza below.
 cask "menfez" do
-  version "1.0.5"
+  version "1.0.6"
 
   on_arm do
-    sha256 "b2428764cc7bfedf96ecf316a94349c109bc13a222b50ac35520aedf8863d2f5"
+    sha256 "c56f4b67170b004dc86fbcd55803744b637eb0873d2dd6ed397cd637496e1cba"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-arm64.dmg"
   end
   on_intel do
-    sha256 "59356b44441aea61a7cc482fdab8fbedcc5f0391bc51dc0c10aecef04872d4c2"
+    sha256 "240dfbac70a0e7ab396dea417e94bfa67284a143d0c4a31c7da51a2bf2b95ac1"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-intel.dmg"
   end
@@ -43,6 +43,8 @@ cask "menfez" do
     strategy :github_latest
   end
 
+  # 1.0.6+: the app updates itself (Sparkle), so brew upgrade leaves it alone.
+  auto_updates true
   depends_on macos: :ventura
 
   app "Menfez.app"
