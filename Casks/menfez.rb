@@ -21,15 +21,15 @@
 # (`burhanrb/menfez`) until the first stable release (1.1.0); it can then move
 # to homebrew/cask with no change to the stanza below.
 cask "menfez" do
-  version "1.0.8"
+  version "1.0.9"
 
   on_arm do
-    sha256 "93de6073e7a9beb008fe9d6a589fafed708bc5c7ffa9be0ba8876bcdf5fbb838"
+    sha256 "4c4932b2893eedeb2a62c0ac419d81382b37627aa76fef7c6088a738b74ba20c"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-arm64.dmg"
   end
   on_intel do
-    sha256 "383ff17c51f44c40e8d38168bee7f533398c0393bef575f9831f209859f134b4"
+    sha256 "5e99b5213298ceb74a7e9aefc8bdbfa10b95e4399486817218d54e52bd1ff4a0"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-intel.dmg"
   end
@@ -92,6 +92,7 @@ cask "menfez" do
           "H=/Library/PrivilegedHelperTools/menfez/menfez-route; " \
           "if [ -x \"$H\" ] && [ \"$(stat -f %u \"$H\")\" = 0 ]; then " \
           "\"$H\" proxy off; " \
+          "\"$H\" killswitch off || true; " \
           "\"$H\" down; " \
           "D='/Library/Application Support/Menfez/dns-state.json'; " \
           "{ [ -f \"$D\" ] || [ -f /var/run/menfez/dns-state.json ]; } && \"$H\" dns auto; " \
