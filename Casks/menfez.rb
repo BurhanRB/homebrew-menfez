@@ -21,15 +21,15 @@
 # (`burhanrb/menfez`) until the first stable release (1.1.0); it can then move
 # to homebrew/cask with no change to the stanza below.
 cask "menfez" do
-  version "1.0.11"
+  version "1.0.12"
 
   on_arm do
-    sha256 "6a0c05d736af83a8c924be1d5a3f84b346c42e36136df2a57961701e6036010a"
+    sha256 "772f42db8ce8706f37dcdd325f45dbdbda8d02acd65773230bbe1a84c55c3fe1"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-arm64.dmg"
   end
   on_intel do
-    sha256 "cf744d81c1fb36d27b278ca1fe94dac783e19793358a31036a2b6dbce5e58379"
+    sha256 "5e1053fc644aa13e02ce0fe157e334e3be232e76278d2b8d8a723425f0f00282"
 
     url "https://github.com/BurhanRB/Menfez/releases/download/v#{version}/Menfez-#{version}-intel.dmg"
   end
